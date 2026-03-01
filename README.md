@@ -1,6 +1,6 @@
 # DirectX11 Lab
 
-This is a personal lab project I created to learn DirectX with AI-assisted guidance.
+This is a personal lab project I created to learn DirectX with AI-assisted guidance, no code is written or generated from AI, AI is just used to help me understand concepts faster.
 
 The goal is to build practical examples step-by-step, with detailed code comments that explain:
 
