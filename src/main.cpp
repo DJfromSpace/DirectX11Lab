@@ -19,7 +19,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
     }
 
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+    // Use the wide default procedure to match CreateWindowExW/RegisterClassW.
+    return DefWindowProcW(hwnd, msg, wParam, lParam);
 }
 
 // Win32 application entry point.
