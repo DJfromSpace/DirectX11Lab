@@ -1,0 +1,53 @@
+# Build directories
+/build/
+/out/
+/bin/
+/obj/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+compile_commands.json
+Makefile
+Testing/
+
+# Visual Studio / MSBuild
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.idb
+*.ilk
+*.pdb
+*.ipdb
+*.iobj
+*.tlog
+*.lastbuildstate
+
+# Compiler / linker outputs
+*.obj
+*.o
+*.lo
+*.a
+*.lib
+*.dll
+*.exe
+*.exp
+*.manifest
+
+# DirectX shader binaries
+*.cso
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.log
+*.tmp
+*.swp
+Thumbs.db
+.DS_Store
