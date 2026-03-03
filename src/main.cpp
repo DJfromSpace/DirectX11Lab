@@ -4,6 +4,12 @@
 #include <dxgi.h>
 #include <iostream>
 
+
+IDXGISwapChain *gSwapChain = nullptr;
+ID3D11Device *gDevice = nullptr;
+ID3D11DeviceContext *gContext = nullptr;
+ID3D11RenderTargetView * gRTV = nullptr;
+
 // Window procedure callback.
 // Parameters:
 // - hwnd: Handle to the window receiving the message.
@@ -33,21 +39,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     (void)hPrevInstance;
     (void)lpCmdLine;
-
-    // Step 1: Define a unique class name for this window type.
+    // ---- Create Win32 Window ---- //
     const wchar_t CLASS_NAME[] = L"DirectX11LabWindowClass";
     std::cout << "Hello DirectX" << std::endl;
 
-    // Step 2: Describe the window class (callback, owner instance, class name).
+    // Create the Window Class
     WNDCLASSW wc{};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = CLASS_NAME;
 
-    // Step 3: Register the class with Windows so we can create windows from it.
+    // Register the Class
     RegisterClassW(&wc);
 
-    // Step 4: Create a window instance using the registered class.
+    // Create the Window
     HWND hwnd = CreateWindowExW(
         0, // dwExStyle: extended style flags.
         CLASS_NAME, // lpClassName: registered window class name.
@@ -62,30 +67,60 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         hInstance, // hInstance: module instance.
         nullptr // lpParam: no extra creation data.
     );
-
-    // Step 5: Abort if window creation failed.
     if(!hwnd) return 0;
+    // -------------------------- //
 
-    // Step 6: Make the created window visible on screen.
+    // ---- D3D Initialization ----
+    // Set up the D3D Swap Chain Descriptor
+    DXGI_SWAP_CHAIN_DESC desc = {0};
+    desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    desc.BufferCount = 1; // Simple Week 1 Setup
+    desc.OutputWindow = hwnd;
+    desc.Windowed = TRUE;
+    desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+    D3D_FEATURE_LEVEL featureLevel;
+    // Setup the D3D Swap Chain //
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(
+        nullptr, //default adapter
+        D3D_DRIVER_TYPE_HARDWARE, // Use Hardware Accel
+        nullptr, // No software raterizer
+        0, // No speical flags, but use DEBUG in dev
+        nullptr, // default feature levels
+        0, 
+        D3D11_SDK_VERSION,
+        &desc,
+        &gSwapChain,
+        &gDevice,
+        &featureLevel,
+        &gContext
+    );
+    if(hr != 0) return -1;
+    // Get Back Buffer
+    ID3D11Texture2D *backBuffer = nullptr;
+    gSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+
+    // Create render target view
+    gDevice->CreateRenderTargetView(backBuffer, nullptr, &gRTV);
+    // Bind the RTV, once or after resize
+    gContext->OMSetRenderTargets(1, &gRTV, nullptr);
+    // ------------------------ //
+
+    // ---- Render Loop ----
+    float clearColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
     ShowWindow(hwnd, nCmdShow);
-
-    // Step 7: Run the message loop so the window can process events.
+    bool running = true;
     MSG msg{};
-    while(GetMessage(&msg, nullptr, 0, 0))
+    while(running)
     {
-        // GetMessage parameters:
-        // - &msg: Receives the next message from the queue.
-        // - nullptr: Read messages for the current thread (not a specific window only).
-        // - 0: Minimum message filter value (no lower bound).
-        // - 0: Maximum message filter value (no upper bound).
-
-        // TranslateMessage parameters:
-        // - &msg: Message to translate (for example key down -> character message).
-        TranslateMessage(&msg);
-
-        // DispatchMessage parameters:
-        // - &msg: Message to send to the window procedure (WindowProc).
-        DispatchMessage(&msg);
+        while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        {
+            // Render
+            gContext->ClearRenderTargetView(gRTV, clearColor);
+            gSwapChain->Present(1, 0); // 1 = Vsync
+        }
     }
 
     return 0;
