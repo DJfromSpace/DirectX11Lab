@@ -15,8 +15,17 @@ Because of that, this repo is meant to be both a learning playground and a refer
 
 - DirectX 11
 - Win32 window creation and message loop fundamentals
+- Vertex buffers, input layouts, shaders, and first triangle rendering
 
 More examples will be added over time as the lab expands into rendering, resources, shaders, and engine-style structure.
+
+## Weekly Notes
+
+I wanted a place to track what each week was actually about, what I built, what tripped me up, and what mattered enough to remember.
+
+- [Weekly Notes Index](weeks/README.md)
+- [Week 1 - Window Setup and First Clear](weeks/week-01/README.md)
+- [Week 2 - Vertex Buffers, Shaders, and First Triangle](weeks/week-02/README.md)
 
 ## Why This Exists
 
